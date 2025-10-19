@@ -1,3 +1,4 @@
+import { useScrollToTop } from "@react-navigation/native"
 import { ReactNode, useRef, useState } from "react"
 import {
   KeyboardAvoidingView,
@@ -10,9 +11,8 @@ import {
   View,
   ViewStyle,
 } from "react-native"
-import { useScrollToTop } from "@react-navigation/native"
 import { SystemBars, SystemBarsProps, SystemBarStyle } from "react-native-edge-to-edge"
-import { KeyboardAwareScrollView } from "react-native-keyboard-controller"
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view"
 
 import { useAppTheme } from "@/theme/context"
 import { $styles } from "@/theme/styles"

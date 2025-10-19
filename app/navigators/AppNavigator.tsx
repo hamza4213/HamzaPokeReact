@@ -9,11 +9,12 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack"
 
 import Config from "@/config"
 import { ErrorBoundary } from "@/screens/ErrorScreen/ErrorBoundary"
-import { WelcomeScreen } from "@/screens/WelcomeScreen"
 import { useAppTheme } from "@/theme/context"
 
 import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 import type { AppStackParamList, NavigationProps } from "./navigationTypes"
+import { PokeMonsListScreen } from "@/screens/PokeMonsListScreen"
+import { PokeMonByNameScreen } from "@/screens/PokeMonByNameScreen"
 
 /**
  * This is a list of all the route names that will exit the app if the back button
@@ -39,9 +40,8 @@ const AppStack = () => {
         },
       }}
     >
-      <Stack.Screen name="Welcome" component={WelcomeScreen} />
-      {/** 🔥 Your screens go here */}
-      {/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
+      <Stack.Screen name="PokeMonsList" component={PokeMonsListScreen} />
+      <Stack.Screen name="PokeMonByName" component={PokeMonByNameScreen} />
     </Stack.Navigator>
   )
 }
