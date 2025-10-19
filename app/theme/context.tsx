@@ -1,3 +1,9 @@
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import {
+  DarkTheme as NavDarkTheme,
+  DefaultTheme as NavDefaultTheme,
+  Theme as NavTheme,
+} from "@react-navigation/native"
 import {
   createContext,
   FC,
@@ -6,19 +12,13 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useState,
 } from "react"
 import { StyleProp, useColorScheme } from "react-native"
-import {
-  DarkTheme as NavDarkTheme,
-  DefaultTheme as NavDefaultTheme,
-  Theme as NavTheme,
-} from "@react-navigation/native"
-import { useMMKVString } from "react-native-mmkv"
-
-import { storage } from "@/utils/storage"
 
 import { setImperativeTheming } from "./context.utils"
 import { darkTheme, lightTheme } from "./theme"
+
 import type {
   AllowedStylesT,
   ImmutableThemeContextModeT,
@@ -42,63 +42,61 @@ export interface ThemeProviderProps {
   initialContext?: ThemeContextModeT
 }
 
+const STORAGE_KEY = "ignite.themeScheme"
+
 /**
  * The ThemeProvider is the heart and soul of the design token system. It provides a context wrapper
  * for your entire app to consume the design tokens as well as global functionality like the app's theme.
  *
  * To get started, you want to wrap your entire app's JSX hierarchy in `ThemeProvider`
  * and then use the `useAppTheme()` hook to access the theme context.
- *
- * Documentation: https://docs.infinite.red/ignite-cli/boilerplate/app/theme/Theming/
  */
 export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   children,
   initialContext,
 }) => {
-  // The operating system theme:
   const systemColorScheme = useColorScheme()
-  // Our saved theme context: can be "light", "dark", or undefined (system theme)
-  const [themeScheme, setThemeScheme] = useMMKVString("ignite.themeScheme", storage)
+  const [themeScheme, setThemeScheme] = useState<ThemeContextModeT | undefined>(undefined)
 
-  /**
-   * This function is used to set the theme context and is exported from the useAppTheme() hook.
-   *  - setThemeContextOverride("dark") sets the app theme to dark no matter what the system theme is.
-   *  - setThemeContextOverride("light") sets the app theme to light no matter what the system theme is.
-   *  - setThemeContextOverride(undefined) the app will follow the operating system theme.
-   */
-  const setThemeContextOverride = useCallback(
-    (newTheme: ThemeContextModeT) => {
+  // Load theme from AsyncStorage once
+  useEffect(() => {
+    const loadTheme = async () => {
+      try {
+        const storedValue = await AsyncStorage.getItem(STORAGE_KEY)
+        if (storedValue) setThemeScheme(storedValue as ThemeContextModeT)
+      } catch (error) {
+        console.error("Failed to load theme:", error)
+      }
+    }
+    loadTheme()
+  }, [])
+
+  // Function to set and persist theme
+  const setThemeContextOverride = useCallback(async (newTheme: ThemeContextModeT) => {
+    try {
       setThemeScheme(newTheme)
-    },
-    [setThemeScheme],
-  )
+      if (newTheme) {
+        await AsyncStorage.setItem(STORAGE_KEY, newTheme)
+      } else {
+        await AsyncStorage.removeItem(STORAGE_KEY)
+      }
+    } catch (error) {
+      console.error("Failed to save theme:", error)
+    }
+  }, [])
 
-  /**
-   * initialContext is the theme context passed in from the app.tsx file and always takes precedence.
-   * themeScheme is the value from MMKV. If undefined, we fall back to the system theme
-   * systemColorScheme is the value from the device. If undefined, we fall back to "light"
-   */
+  // Decide which theme is active
   const themeContext: ImmutableThemeContextModeT = useMemo(() => {
-    const t = initialContext || themeScheme || (!!systemColorScheme ? systemColorScheme : "light")
+    const t = initialContext || themeScheme || (systemColorScheme ?? "light")
     return t === "dark" ? "dark" : "light"
   }, [initialContext, themeScheme, systemColorScheme])
 
   const navigationTheme: NavTheme = useMemo(() => {
-    switch (themeContext) {
-      case "dark":
-        return NavDarkTheme
-      default:
-        return NavDefaultTheme
-    }
+    return themeContext === "dark" ? NavDarkTheme : NavDefaultTheme
   }, [themeContext])
 
   const theme: Theme = useMemo(() => {
-    switch (themeContext) {
-      case "dark":
-        return darkTheme
-      default:
-        return lightTheme
-    }
+    return themeContext === "dark" ? darkTheme : lightTheme
   }, [themeContext])
 
   useEffect(() => {
@@ -108,14 +106,9 @@ export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   const themed = useCallback(
     <T,>(styleOrStyleFn: AllowedStylesT<T>) => {
       const flatStyles = [styleOrStyleFn].flat(3) as (ThemedStyle<T> | StyleProp<T>)[]
-      const stylesArray = flatStyles.map((f) => {
-        if (typeof f === "function") {
-          return (f as ThemedStyle<T>)(theme)
-        } else {
-          return f
-        }
-      })
-      // Flatten the array of styles into a single object
+      const stylesArray = flatStyles.map((f) =>
+        typeof f === "function" ? (f as ThemedStyle<T>)(theme) : f,
+      )
       return Object.assign({}, ...stylesArray) as T
     },
     [theme],
@@ -133,13 +126,12 @@ export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
 }
 
 /**
- * This is the primary hook that you will use to access the theme context in your components.
- * Documentation: https://docs.infinite.red/ignite-cli/boilerplate/app/theme/useAppTheme.tsx/
+ * Hook for accessing the theme context.
  */
 export const useAppTheme = () => {
   const context = useContext(ThemeContext)
   if (!context) {
-    throw new Error("useAppTheme must be used within an ThemeProvider")
+    throw new Error("useAppTheme must be used within a ThemeProvider")
   }
   return context
 }
