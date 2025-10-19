@@ -1,4 +1,3 @@
-import { ComponentProps } from "react"
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs"
 import {
   CompositeScreenProps,
@@ -6,6 +5,7 @@ import {
   NavigatorScreenParams,
 } from "@react-navigation/native"
 import { NativeStackScreenProps } from "@react-navigation/native-stack"
+import { ComponentProps } from "react"
 
 // Demo Tab Navigator types
 export type DemoTabParamList = {
@@ -22,7 +22,7 @@ export type AppStackParamList = {
   Demo: NavigatorScreenParams<DemoTabParamList>
   // 🔥 Your screens go here
   PokeMonsList: undefined
-  PokeMonByName: undefined
+  PokeMonByName: { name: string }
   // IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
