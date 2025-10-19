@@ -1,13 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit"
+import { listPokeMon } from "./types"
+type pokeState = {
+  pokelist: listPokeMon[]
+}
+const initialState: pokeState = { pokelist: [] }
 
 const pokeSlice = createSlice({
   name: "poke",
-  initialState: {},
+  initialState,
   reducers: {
-    todoAdded(state, action) {},
-    todoToggled(state, action) {},
+    setPokesList(state, action) {
+      state.pokelist = action.payload
+    },
   },
 })
 
-export const { todoAdded, todoToggled } = pokeSlice.actions
+export const { setPokesList } = pokeSlice.actions
 export default pokeSlice.reducer
