@@ -9,12 +9,13 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack"
 
 import Config from "@/config"
 import { ErrorBoundary } from "@/screens/ErrorScreen/ErrorBoundary"
-import { useAppTheme } from "@/theme/context"
-
-import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
-import type { AppStackParamList, NavigationProps } from "./navigationTypes"
-import { PokeMonsListScreen } from "@/screens/PokeMonsListScreen"
 import { PokeMonByNameScreen } from "@/screens/PokeMonByNameScreen"
+import { PokeMonsListScreen } from "@/screens/PokeMonsListScreen"
+import { store } from "@/store"
+import { useAppTheme } from "@/theme/context"
+import { Provider } from "react-redux"
+import type { AppStackParamList, NavigationProps } from "./navigationTypes"
+import { navigationRef, useBackButtonHandler } from "./navigationUtilities"
 
 /**
  * This is a list of all the route names that will exit the app if the back button
@@ -52,10 +53,12 @@ export const AppNavigator = (props: NavigationProps) => {
   useBackButtonHandler((routeName) => exitRoutes.includes(routeName))
 
   return (
-    <NavigationContainer ref={navigationRef} theme={navigationTheme} {...props}>
-      <ErrorBoundary catchErrors={Config.catchErrors}>
-        <AppStack />
-      </ErrorBoundary>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer ref={navigationRef} theme={navigationTheme} {...props}>
+        <ErrorBoundary catchErrors={Config.catchErrors}>
+          <AppStack />
+        </ErrorBoundary>
+      </NavigationContainer>
+    </Provider>
   )
 }
