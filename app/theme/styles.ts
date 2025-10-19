@@ -14,3 +14,7 @@ export const $styles = {
     overflow: "hidden",
   } as ViewStyle,
 }
+export const $root: ViewStyle = {
+  flex: 1,
+  paddingHorizontal: 10,
+}
