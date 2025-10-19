@@ -1,3 +1,4 @@
+import { AutoImage } from "@/components/AutoImage"
 import { Header } from "@/components/Header"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
@@ -5,9 +6,9 @@ import type { AppStackScreenProps } from "@/navigators/navigationTypes"
 import { useGetPokemonListQuery } from "@/store/pokeMonApi"
 import { listPokeMon } from "@/store/types"
 import { spacing } from "@/theme/spacing"
-import { $root } from "@/theme/styles"
+import { $root, $styles } from "@/theme/styles"
 import { FC } from "react"
-import { FlatList, Image, ListRenderItem, Pressable, ViewStyle } from "react-native"
+import { FlatList, ListRenderItem, Pressable, ViewStyle } from "react-native"
 interface PokeMonsListScreenProps extends AppStackScreenProps<"PokeMonsList"> {}
 
 export const PokeMonsListScreen: FC<PokeMonsListScreenProps> = ({ navigation }) => {
@@ -24,7 +25,7 @@ export const PokeMonsListScreen: FC<PokeMonsListScreenProps> = ({ navigation }) 
           })
         }}
       >
-        <Image source={{ uri: imageUrl }} style={{ height: 100, width: 100 }} />
+        <AutoImage source={{ uri: imageUrl }} style={$styles.image} />
         <Text text={pokeMon.name.toUpperCase()} weight="bold" />
       </Pressable>
     )

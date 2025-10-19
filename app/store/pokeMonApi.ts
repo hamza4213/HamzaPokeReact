@@ -13,7 +13,7 @@ export const pokemonApi = createApi({
       transformResponse: (response: defaultListResponse) => response.results,
     }),
     getPokemonByName: build.query<Pokemon, string>({
-      query: (name) => `pokemon/${name}`,
+      query: (name) => `/${name}`,
     }),
   }),
 })
