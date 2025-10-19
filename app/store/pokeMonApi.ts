@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 
 import Config from "@/config"
-import { store } from "."
+import { store } from "./index"
 import { setPokesList } from "./pokeMonSlice"
 import type { defaultListResponse, listPokeMon, Pokemon } from "./types"
 
