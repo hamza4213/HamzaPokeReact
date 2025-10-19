@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef } from "react"
-import { BackHandler, Linking, Platform } from "react-native"
 import {
   NavigationState,
   PartialState,
   createNavigationContainerRef,
 } from "@react-navigation/native"
+import { useEffect, useRef, useState } from "react"
+import { BackHandler, Linking, Platform } from "react-native"
 
 import Config from "@/config"
 import type { PersistNavigationConfig } from "@/config/config.base"
@@ -133,7 +133,6 @@ export function useNavigationPersistence(storage: Storage, persistenceKey: strin
       if (previousRouteName !== currentRouteName) {
         // track screens.
         if (__DEV__) {
-          console.log(currentRouteName)
         }
       }
 
