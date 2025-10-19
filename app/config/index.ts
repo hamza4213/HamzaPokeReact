@@ -14,13 +14,12 @@
  * Read more here: https://reactnative.dev/docs/security#storing-sensitive-info
  */
 import BaseConfig from "./config.base"
-import DevConfig from "./config.dev"
 import ProdConfig from "./config.prod"
-
 let ExtraConfig = ProdConfig
+const env = process.env.EXPO_PUBLIC_APP_ENV
 
-if (__DEV__) {
-  ExtraConfig = DevConfig
+if (env === "production") {
+  ExtraConfig = ProdConfig
 }
 
 const Config = { ...BaseConfig, ...ExtraConfig }
