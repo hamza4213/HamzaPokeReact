@@ -1,15 +1,16 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
 
 import Config from "@/config"
-import type { Pokemon } from "./types"
+import type { defaultListResponse, listPokeMon, Pokemon } from "./types"
 
 // Define a service using a base URL and expected endpoints
 export const pokemonApi = createApi({
   reducerPath: "pokemonApi",
   baseQuery: fetchBaseQuery({ baseUrl: Config.API_URL }),
   endpoints: (build) => ({
-    getPokemonList: build.query<Pokemon, null>({
-      query: () => `pokemon`,
+    getPokemonList: build.query<listPokeMon[], null>({
+      query: () => `/`,
+      transformResponse: (response: defaultListResponse) => response.results,
     }),
     getPokemonByName: build.query<Pokemon, string>({
       query: (name) => `pokemon/${name}`,

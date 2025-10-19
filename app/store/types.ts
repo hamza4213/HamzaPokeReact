@@ -10,3 +10,13 @@ export type Pokemon = {
   abilities?: string[]
   isLegendary?: boolean
 }
+export type listPokeMon = {
+  name: string
+  url: string
+}
+export type defaultListResponse = {
+  count: number
+  results: listPokeMon[]
+  previous: null
+  next: string
+}
