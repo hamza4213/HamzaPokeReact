@@ -1,3 +1,16 @@
+import { useFonts } from "expo-font"
+import * as Linking from "expo-linking"
+import { useEffect, useState } from "react"
+import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context"
+
+import { initI18n } from "./i18n"
+import { AppNavigator } from "./navigators/AppNavigator"
+import { useNavigationPersistence } from "./navigators/navigationUtilities"
+import { ThemeProvider } from "./theme/context"
+import { customFontsToLoad } from "./theme/typography"
+import { loadDateFnsLocale } from "./utils/formatDate"
+import * as storage from "./utils/storage"
+
 /* eslint-disable import/first */
 /**
  * Welcome to the main entry point of the app. In this file, we'll
@@ -10,27 +23,7 @@
  * The app navigation resides in ./app/navigators, so head over there
  * if you're interested in adding screens and navigators.
  */
-if (__DEV__) {
-  // Load Reactotron in development only.
-  // Note that you must be using metro's `inlineRequires` for this to work.
-  // If you turn it off in metro.config.js, you'll have to manually import it.
-  require("./devtools/ReactotronConfig.ts")
-}
 import "./utils/gestureHandler"
-
-import { useEffect, useState } from "react"
-import { useFonts } from "expo-font"
-import * as Linking from "expo-linking"
-import { KeyboardProvider } from "react-native-keyboard-controller"
-import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context"
-
-import { initI18n } from "./i18n"
-import { AppNavigator } from "./navigators/AppNavigator"
-import { useNavigationPersistence } from "./navigators/navigationUtilities"
-import { ThemeProvider } from "./theme/context"
-import { customFontsToLoad } from "./theme/typography"
-import { loadDateFnsLocale } from "./utils/formatDate"
-import * as storage from "./utils/storage"
 
 export const NAVIGATION_PERSISTENCE_KEY = "NAVIGATION_STATE"
 
@@ -94,15 +87,13 @@ export function App() {
   // otherwise, we're ready to render the app
   return (
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-      <KeyboardProvider>
-        <ThemeProvider>
-          <AppNavigator
-            linking={linking}
-            initialState={initialNavigationState}
-            onStateChange={onNavigationStateChange}
-          />
-        </ThemeProvider>
-      </KeyboardProvider>
+      <ThemeProvider>
+        <AppNavigator
+          linking={linking}
+          initialState={initialNavigationState}
+          onStateChange={onNavigationStateChange}
+        />
+      </ThemeProvider>
     </SafeAreaProvider>
   )
 }
